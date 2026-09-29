@@ -1,0 +1,41 @@
+Structured Log Line (request_received):
+{
+  "service": "api",
+  "event": "request_received",
+  "correlation_id": "req-80a7cefd",
+  "session_id": "s01",
+  "user_id_hash": "2055254ee30a",
+  "feature": "qa",
+  "model": "claude-sonnet-4-5",
+  "env": "dev",
+  "level": "info",
+  "ts": "2026-09-29T10:52:49.450518Z",
+  "payload": {
+    "message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"
+  }
+}
+
+Structured Log Line (response_sent):
+{
+  "service": "api",
+  "event": "response_sent",
+  "correlation_id": "req-80a7cefd",
+  "session_id": "s01",
+  "user_id_hash": "2055254ee30a",
+  "feature": "qa",
+  "model": "claude-sonnet-4-5",
+  "env": "dev",
+  "latency_ms": 151,
+  "ttft_ms": 50,
+  "tokens_in": 36,
+  "tokens_out": 169,
+  "cost_usd": 0.002643,
+  "quality_score": 0.9,
+  "tool_name": "retrieval",
+  "tool_success": true,
+  "level": "info",
+  "ts": "2026-09-29T10:52:50.069639Z",
+  "payload": {
+    "answer_preview": "Starter answer. You should improve this output logic..."
+  }
+}

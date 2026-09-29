@@ -1,0 +1,17 @@
+PII Redaction Verification:
+Input raw user queries:
+1. "What is your refund policy? My email is student@vinuni.edu.vn"
+2. "Here is my phone 0987654321, what should be logged?"
+3. "My CCCD is 001098012345, please check account"
+4. "What is the policy for PII and credit card 4111 1111 1111 1111?"
+
+Logged message_preview in data/logs.jsonl:
+1. "What is your refund policy? My email is [REDACTED_EMAIL]"
+2. "Here is my phone [REDACTED_PHONE_VN], what should be logged?"
+3. "My CCCD is [REDACTED_CCCD], please check account"
+4. "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?"
+
+PII Scrubber Inspection:
+- Processor 'scrub_event' executed recursively before JsonlFileProcessor and JSONRenderer.
+- All sensitive patterns replaced with safe [REDACTED_<TYPE>] tokens.
+- Potential PII leaks detected by validator: 0.

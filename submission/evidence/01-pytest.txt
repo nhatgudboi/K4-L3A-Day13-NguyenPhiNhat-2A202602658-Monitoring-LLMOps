@@ -1,0 +1,19 @@
+$ python -m pytest -q
+..........................                                               [100%]
+============================== 26 passed in 1.82s ==============================
+
+PASS tests/test_agent_prompt_trace.py::test_agent_records_prompt_version_with_v4_observation_api
+PASS tests/test_challenge_config.py::ChallengeConfigTests
+PASS tests/test_chat_observability.py::test_chat_response_log_exposes_quality_for_dashboard
+PASS tests/test_chat_observability.py::test_chat_correlation_id_and_enrichment_headers_and_logs
+PASS tests/test_cli_windows_encoding.py::WindowsCliEncodingTests
+PASS tests/test_dashboard_validator.py::test_repository_dashboard_contract_is_valid
+PASS tests/test_metrics.py::test_percentile_basic
+PASS tests/test_pii.py::test_scrub_email
+PASS tests/test_pii.py::test_scrub_common_vietnamese_phone_formats
+PASS tests/test_pii.py::test_scrub_cccd
+PASS tests/test_pii.py::test_scrub_credit_card
+PASS tests/test_pii.py::test_scrub_passport
+PASS tests/test_prompt_management.py
+PASS tests/test_tracing_adapter.py
+PASS tests/test_validate_logs.py

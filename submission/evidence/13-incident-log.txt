@@ -1,0 +1,13 @@
+Incident Log Analysis (Matching Correlation ID: req-22b165de):
+
+Log Line 1 (request_received):
+{"service": "api", "payload": {"message_preview": "What is your refund policy?"}, "event": "request_received", "session_id": "s_incident_01", "model": "claude-sonnet-4-5", "feature": "refund", "env": "dev", "user_id_hash": "6959f68b1d57", "correlation_id": "req-22b165de", "level": "info", "ts": "2026-09-29T10:54:51.247326Z"}
+
+Log Line 2 (response_sent):
+{"service": "api", "latency_ms": 2652, "ttft_ms": 50, "tokens_in": 29, "tokens_out": 138, "cost_usd": 0.002157, "quality_score": 0.9, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer..."}, "event": "response_sent", "session_id": "s_incident_01", "model": "claude-sonnet-4-5", "feature": "refund", "env": "dev", "user_id_hash": "6959f68b1d57", "correlation_id": "req-22b165de", "level": "info", "ts": "2026-09-29T10:54:53.900563Z"}
+
+Investigation Note:
+- correlation_id: req-22b165de
+- latency_ms: 2652 ms
+- ttft_ms: 50 ms
+- Discrepancy (2652 - 50 = ~2600ms) localized between request reception and LLM generation.

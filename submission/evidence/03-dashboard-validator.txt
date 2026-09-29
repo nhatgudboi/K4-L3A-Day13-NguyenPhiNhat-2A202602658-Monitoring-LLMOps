@@ -1,0 +1,10 @@
+$ python scripts/validate_dashboard.py
+HỢP LỆ: 6/6 panel có trong dashboard contract.
+
+Contract Validation:
+[?] Panel 'latency': P50, P95, P99, TTFT P95 | unit: ms | threshold: p95 <= 3000ms
+[?] Panel 'traffic': count, rate_per_minute | unit: requests_per_minute | threshold: >= 1
+[?] Panel 'errors': error_rate_pct, count_by_value, tool_success_rate_pct | threshold: <= 2%
+[?] Panel 'cost': sum_by_minute, total | unit: usd | threshold: total <= 2.5
+[?] Panel 'tokens': sum_by_field (tokens_in, tokens_out) | unit: tokens | threshold: <= 50000
+[?] Panel 'quality': mean quality_score | unit: score_0_to_1 | threshold: >= 0.75

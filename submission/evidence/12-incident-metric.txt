@@ -1,0 +1,14 @@
+Incident Detection via Metrics (Practice Scenario: rag_slow):
+Incident Trigger:
+- Timestamp: 2026-09-29 17:54:41 (local) / 10:54:41 UTC
+- Command: python scripts/inject_incident.py --scenario rag_slow
+- Incident State: {"rag_slow": True, "tool_fail": False, "cost_spike": False}
+
+Metric Symptoms Observed on Dashboard:
+- Baseline Latency P95: 155.0 ms
+- Incident Latency P95: 2652.0 ms (SPIKE > 17x)
+- TTFT P95: 50.0 ms (remained normal)
+- Overall Latency / TTFT Discrepancy:
+  * TTFT indicates the model generation started promptly (50ms).
+  * However, total latency spiked by ~2500ms, indicating bottleneck BEFORE token generation.
+- SLO Status: Breaching fast_successful_requests target threshold (approaching 3000ms limit).
