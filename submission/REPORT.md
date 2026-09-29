@@ -8,7 +8,7 @@
 - **MSSV:** 2A202602658
 - **Lớp:** K4-L3A
 - **Repository URL:** https://github.com/nhatgudboi/K4-L3A-Day13-NguyenPhiNhat-2A202602658-Monitoring-LLMOps
-- **Commit SHA cuối:** cd8b266 (hoặc commit SHA mới nhất trên remote branch main)
+- **Commit SHA cuối:** 79903c4 (hoặc commit SHA mới nhất trên remote branch main)
 - **Challenge ID:** practice-rag_slow
 - **Tên project Langfuse cá nhân:** `day13-k4-l3a-2A202602658`
 
@@ -45,6 +45,14 @@
 | Latency P95 / TTFT P95 | 155.0 ms / 50.0 ms | 151.0 ms / 50.0 ms | Độ trễ bình thường ổn định, cách xa ngưỡng cảnh báo SLO 3000ms |
 | Retrieval success rate | 100% | 100% | Tool retrieval hoạt động chuẩn xác, không có ngoại lệ vector store ở trạng thái baseline |
 
+### Bằng chứng nghiệm thu Tests & Validators
+
+![Pytest cuối](evidence/01-pytest.png)
+
+![Log Validator 100/100](evidence/02-log-validator.png)
+
+![Dashboard Validator 6/6](evidence/03-dashboard-validator.png)
+
 ## 4. Logging và PII
 
 - **Cách tạo/nhận và truyền correlation ID:**
@@ -55,6 +63,12 @@
   Tại `app/logging_config.py`, processor `scrub_event` được đăng ký đứng trước `JsonlFileProcessor` và `JSONRenderer`. Hàm `scrub_event` duyệt đệ quy tất cả các trường và giá trị chuỗi trong log dictionary, gọi `scrub_text()` từ `app/pii.py`. Các biểu thức chính quy trong `PII_PATTERNS` (bao gồm `credit_card`, `cccd`, `email`, `phone_vn`, `passport`) sẽ thay thế toàn bộ dữ liệu nhạy cảm thành các token an toàn như `[REDACTED_EMAIL]`, `[REDACTED_PHONE_VN]`, `[REDACTED_CCCD]`, `[REDACTED_CREDIT_CARD]`. Việc scrubbing này diễn ra trực tiếp trên cấu trúc in-memory trước khi JSON được serialize hay ghi xuống `data/logs.jsonl` hoặc xuất ra console.
 - **Cách kiểm chứng kết quả:**
   Chạy lệnh `python scripts/validate_logs.py` đọc toàn bộ file `data/logs.jsonl`. Kết quả đạt 100/100, 0 PII leaks, 0 records missing required/enrichment fields. Đồng thời chạy `python -m pytest -q` với bộ kiểm thử `tests/test_pii.py` và `tests/test_chat_observability.py` để bảo đảm các trường nhạy cảm đều được che giấu trong mọi điều kiện.
+
+### Bằng chứng Logging & PII Redaction
+
+![Structured Log](evidence/04-structured-log.png)
+
+![PII Redaction](evidence/05-pii-redaction.png)
 
 ## 5. Tracing và prompt versioning
 
@@ -77,6 +91,18 @@
 - **Cách promote và rollback `production`:**
   - **Promote:** Trên giao diện Prompt Management của Langfuse cho prompt `day13-chat`, gỡ label `production` khỏi v1 và gán label `production` cho v2. Ứng dụng khi chạy với `LANGFUSE_PROMPT_LABEL=production` sẽ tự động fetch nội dung mới của v2 mà không cần thay đổi hay build lại mã nguồn.
   - **Rollback:** Khi phát hiện candidate v2 không đáp ứng kỳ vọng hoặc làm suy giảm chất lượng câu trả lời, quản trị viên chỉ cần chuyển label `production` trỏ ngược lại vào v1 ngay trên giao diện Langfuse. App sẽ tự động tải lại v1, hoàn tất rollback tức thì mà không có thời gian gián đoạn dịch vụ (zero-downtime).
+
+### Bằng chứng Tracing & Prompt Management
+
+![Trace List](evidence/06-trace-list.png)
+
+![Trace Waterfall](evidence/07-trace-waterfall.png)
+
+![Trace Metadata](evidence/08-trace-metadata.png)
+
+![Prompt Versions](evidence/09-prompt-versions.png)
+
+![Prompt Rollback](evidence/10-prompt-rollback.png)
 
 ## 6. Dashboard, SLO và alerts
 
@@ -101,6 +127,10 @@
   2. **Alert 2 (`HighErrorRate`)**: Severity `critical`, điều kiện `error_rate_pct > 2.0` trong `5m`, kênh Slack `#alerts-llmops-critical`. Runbook: xem error breakdown trên panel Errors, tra cứu `request_failed` tìm `payload.detail`, kiểm tra trạng thái vector store / LLM API endpoint, restart container hoặc chuyển sang fallback static response.
   3. **Alert 3 (`LowQualityScoreOrRetrievalDegradation`)**: Severity `warning`, điều kiện `quality_avg < 0.75 or tool_success_rate_pct < 90` trong `10m`, kênh Slack `#alerts-llmops`. Runbook: so sánh xu hướng chất lượng câu trả lời, đối chiếu `prompt_version` vừa cập nhật, nếu do prompt mới thì rollback ngay `production` về version trước trên Langfuse, nếu do thiếu dữ liệu thì bổ sung domain documents.
 
+### Bằng chứng Dashboard Runtime
+
+![Dashboard Overview 6 Panels](evidence/11-dashboard-overview.png)
+
 ## 7. Điều tra challenge
 
 - **Challenge ID:** `practice-rag_slow`
@@ -122,6 +152,14 @@
   Tắt kịch bản sự cố (`python scripts/inject_incident.py --scenario rag_slow --disable`); trong thực tế triển khai cache tầng retrieval (Redis/In-memory vector cache), đặt timeout cứng cho bước retrieval là 1000ms (nếu quá thời gian thì chuyển ngay sang fallback prompt không có context thay vì làm treo cả request).
 - **Preventive measure:**
   Cấu hình cảnh báo sớm trên thời gian thực thi của riêng span `retrieval` (> 1000ms), kích hoạt circuit breaker tự động ngắt kết nối với vector DB bị quá tải, và thiết lập SLO chuyên biệt cho thành phần retrieval.
+
+### Bằng chứng Incident Investigation (Metrics → Logs → Traces)
+
+![Incident Metric Spike](evidence/12-incident-metric.png)
+
+![Incident Log Correlation](evidence/13-incident-log.png)
+
+![Incident Trace Waterfall Root Cause](evidence/14-incident-trace.png)
 
 ## 8. Giải thích và tự đánh giá
 
